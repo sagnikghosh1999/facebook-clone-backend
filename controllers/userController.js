@@ -292,16 +292,31 @@ exports.validateResetCode = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
+//change password
 exports.changePassword = async (req, res) => {
-  const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-  const cryptedPassword = await bcrypt.hash(password, 12);
-  await User.findOneAndUpdate(
-    { email },
-    {
-      password: cryptedPassword,
-    }
-  );
-  return res.status(200).json({ message: "Password reset successfully" });
+    const cryptedPassword = await bcrypt.hash(password, 12);
+    await User.findOneAndUpdate(
+      { email },
+      {
+        password: cryptedPassword,
+      }
+    );
+    return res.status(200).json({ message: "Password reset successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+//get a profile
+exports.getProfile = async (req, res) => {
+  try {
+    const { username } = req.params;
+    const user = await User.findById(req.user.id);
+    const profile = await User.findOne({ username }).select("-password");
+    res.json(profile);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };

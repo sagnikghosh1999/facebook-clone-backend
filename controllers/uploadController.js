@@ -21,6 +21,22 @@ exports.uploadImages = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+exports.listImages = async (req, res) => {
+  const { path, sort, max } = req.body;
+
+  cloudinary.v2.search
+    .expression(`facebook-clone/${path}`)
+    .sort_by("created_at", `${sort}`)
+    .max_results(max)
+    .execute()
+    .then((result) => {
+      res.json(result);
+    })
+    .catch((err) => {
+      console.log(err.error.message);
+    });
+};
 const uploadToCloudinary = async (file, path) => {
   return new Promise((resolve) => {
     cloudinary.v2.uploader.upload(
