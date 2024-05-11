@@ -313,7 +313,7 @@ exports.changePassword = async (req, res) => {
 exports.getProfile = async (req, res) => {
   try {
     const { username } = req.params;
-    const user = await User.findById(req.user.id);
+    // const user = await User.findById(req.user.id);
     const profile = await User.findOne({ username }).select("-password");
     res.json(profile);
   } catch (error) {
