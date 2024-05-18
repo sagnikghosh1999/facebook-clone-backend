@@ -8,6 +8,7 @@ const {
 } = require("../helpers/validations");
 const User = require("../models/userModel");
 const Code = require("../models/codeModel");
+const Post = require("../models/postModel");
 const { generateToken } = require("../helpers/tokens");
 const { sendVerificationEmail, sendResetCode } = require("../helpers/mailer");
 const { generateCode } = require("../helpers/generateCode");
@@ -315,7 +316,13 @@ exports.getProfile = async (req, res) => {
     const { username } = req.params;
     // const user = await User.findById(req.user.id);
     const profile = await User.findOne({ username }).select("-password");
-    res.json(profile);
+
+    if (!profile) {
+      return res.json({ ok: false });
+    }
+
+    const posts = await Post.find({ user: profile._id }).populate("user");
+    res.json({ ...profile.toObject(), posts });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
