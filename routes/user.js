@@ -11,6 +11,7 @@ const {
   getProfile,
   updateProfilePicture,
   updateCover,
+  updateDetails,
 } = require("../controllers/userController");
 const { authUser } = require("../middlewares/auth");
 
@@ -27,5 +28,6 @@ router.post("/changepassword", changePassword);
 router.get("/getprofile/:username", getProfile);
 router.put("/updateprofilepicture", authUser, updateProfilePicture);
 router.put("/updatecover", authUser, updateCover);
+router.put("/updatedetails", authUser, updateDetails);
 
 module.exports = router;
