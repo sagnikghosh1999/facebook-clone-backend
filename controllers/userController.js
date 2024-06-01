@@ -139,6 +139,7 @@ exports.login = async (req, res) => {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
+    await user.populate("friends", "first_name last_name username picture");
     // checking if email exists
     if (!user) {
       return res.status(400).json({
@@ -166,6 +167,7 @@ exports.login = async (req, res) => {
       token: token,
       verified: user.verified,
       message: "Logged in successfully !",
+      friends: user.friends,
     });
   } catch (err) {
     res.send(500).json({
