@@ -18,10 +18,13 @@ exports.getAllStories = async (req, res) => {
     const promises = following.map((user) => {
       return Story.find({ user: user })
         .populate("user", "first_name last_name picture username")
-        .sort({ createdAt: -1 })
-        .limit(10);
+        .sort({ createdAt: -1 });
     });
     const followingStories = await (await Promise.all(promises)).flat();
+    const userStories = await Story.find({ user: req.user.id })
+      .populate("user", "first_name last_name picture username")
+      .sort({ createdAt: -1 });
+    followingStories.push(...[...userStories]);
     followingStories.sort((a, b) => {
       return b.createdAt - a.createdAt;
     });

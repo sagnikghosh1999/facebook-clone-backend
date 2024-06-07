@@ -9,6 +9,6 @@ const {
 const router = express.Router();
 
 router.post("/createstory", authUser, createStory);
-router.post("/getallstories", authUser, getAllStories);
+router.get("/getallstories", authUser, getAllStories);
 
 module.exports = router;
