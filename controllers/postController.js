@@ -1,5 +1,6 @@
 const Post = require("../models/postModel");
 const User = require("../models/userModel");
+const React = require("../models/reactModel");
 const { deleteFromCloudinary } = require("./uploadController");
 
 exports.createPost = async (req, res) => {
@@ -101,12 +102,12 @@ exports.deletePost = async (req, res) => {
     if (post.images.length != 0) {
       for (let i = 0; i < post.images.length; i++) {
         await deleteFromCloudinary(post.images[i].public_id);
-        // console.log(post.images[i].public_id);
       }
     }
 
+    await React.deleteMany({ postRef: req.params.id });
+
     await post.remove();
-    // console.log(post);
 
     res.json({ status: "ok" });
   } catch (error) {
