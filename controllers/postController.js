@@ -1,5 +1,6 @@
 const Post = require("../models/postModel");
 const User = require("../models/userModel");
+const { deleteFromCloudinary } = require("./uploadController");
 
 exports.createPost = async (req, res) => {
   try {
@@ -95,7 +96,18 @@ exports.savePost = async (req, res) => {
 
 exports.deletePost = async (req, res) => {
   try {
-    await Post.findByIdAndRemove(req.params.id);
+    const post = await Post.findById(req.params.id);
+
+    if (post.images.length != 0) {
+      for (let i = 0; i < post.images.length; i++) {
+        await deleteFromCloudinary(post.images[i].public_id);
+        // console.log(post.images[i].public_id);
+      }
+    }
+
+    await post.remove();
+    // console.log(post);
+
     res.json({ status: "ok" });
   } catch (error) {
     return res.status(500).json({ message: error.message });

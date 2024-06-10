@@ -12,8 +12,8 @@ exports.uploadImages = async (req, res) => {
     let files = Object.values(req.files).flat();
     let images = [];
     for (const file of files) {
-      const url = await uploadToCloudinary(file, path);
-      images.push(url);
+      const result = await uploadToCloudinary(file, path);
+      images.push(result);
       removeTmp(file.tempFilePath);
     }
     res.json(images);
@@ -51,9 +51,21 @@ const uploadToCloudinary = async (file, path) => {
         }
         resolve({
           url: res.secure_url,
+          public_id: res.public_id,
         });
       }
     );
+  });
+};
+
+exports.deleteFromCloudinary = async (public_id) => {
+  return new Promise((resolve) => {
+    cloudinary.v2.uploader.destroy(public_id, (err, res) => {
+      if (err) {
+        return res.status(400).json({ message: "destroy image failed." });
+      }
+      resolve(res);
+    });
   });
 };
 
