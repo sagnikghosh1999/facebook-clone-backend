@@ -28,7 +28,27 @@ exports.getAllStories = async (req, res) => {
     followingStories.sort((a, b) => {
       return b.createdAt - a.createdAt;
     });
-    res.json(followingStories);
+    // res.json(followingStories);
+    const groupedByUser = Object.values(
+      followingStories.reduce((acc, story) => {
+        const userId = story.user._id;
+        if (!acc[userId]) {
+          acc[userId] = {
+            user: story.user,
+            stories: [],
+          };
+        }
+        acc[userId].stories.push({
+          _id: story._id,
+          text: story.text,
+          background: story.background,
+          createdAt: story.createdAt,
+          updatedAt: story.updatedAt,
+        });
+        return acc;
+      }, {})
+    );
+    res.json(groupedByUser);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
