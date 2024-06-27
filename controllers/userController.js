@@ -170,7 +170,7 @@ exports.login = async (req, res) => {
       friends: user.friends,
     });
   } catch (err) {
-    res.send(500).json({
+    res.status(500).json({
       message: err.message,
     });
   }
