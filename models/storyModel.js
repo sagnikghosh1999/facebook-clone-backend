@@ -21,4 +21,7 @@ const storySchema = new mongoose.Schema({
   },
 });
 
+// Ensure the TTL index is created
+storySchema.index({ createdAt: 1 }, { expireAfterSeconds: 86400 });
+
 module.exports = mongoose.model("Story", storySchema);
