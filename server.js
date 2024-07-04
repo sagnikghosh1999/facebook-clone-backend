@@ -17,13 +17,26 @@ app.use(
   })
 );
 
+app.get("/", (req, res) => {
+  res.send("HelloWorld");
+});
+
 //routes
 readdirSync("./routes").map((r) => app.use("/", require("./routes/" + r)));
 
 //database connection
 connectDatabase();
 
-const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => {
-  console.log(`Server is listening on port ${PORT}...`);
+const server = app.listen(process.env.PORT, () => {
+  console.log(`app is listening on http://localhost:${process.env.PORT}`);
+});
+
+//Unhandled promise rejection
+process.on("unhandledRejection", (err) => {
+  console.log(`Error: ${err.message}`);
+  console.log(`Shutting down the server due to Unhandled Promise rejection`);
+
+  server.close(() => {
+    process.exit(1);
+  });
 });
