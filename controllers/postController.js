@@ -99,10 +99,12 @@ exports.deletePost = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
 
-    if (post?.images) {
-      if (post?.images?.length != 0) {
-        for (let i = 0; i < post.images.length; i++) {
-          await deleteFromCloudinary(post.images[i].public_id);
+    if (!(post.type === "coverPicture" || post.type === "profilePicture")) {
+      if (post?.images) {
+        if (post?.images?.length != 0) {
+          for (let i = 0; i < post.images.length; i++) {
+            await deleteFromCloudinary(post.images[i].public_id);
+          }
         }
       }
     }
